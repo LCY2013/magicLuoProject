@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean name="mysqlDao" class="com.lcydream.project.springsource.autowiremode.MySqlDao"/>
+    <bean name="mongoDao" class="com.lcydream.project.springsource.autowiremode.MongoDao"/>
+
+    <!--非自动注入，手动配置依赖-->
+    <bean name="service-without-autowire" class="com.lcydream.project.springsource.autowiremode.service.Service" autowire="no">
+        <property name="mongoDao" ref="mongoDao"/>
+        <property name="mysqlDao" ref="mysqlDao"/>
+    </bean>
+
+    <!--
+    通过配置autowire属性，我们就不需要像上面那样显式配置依赖了
+    -->
+    <bean name="service-with-autowire" class="com.lcydream.project.springsource.autowiremode.service.Service" autowire="byName"/>
+
+</beans>

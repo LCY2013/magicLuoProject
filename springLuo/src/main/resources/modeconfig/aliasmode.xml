@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Configuring a bean -->
+    <bean id="magicLuo" class="com.lcydream.project.springsource.aliasmode.MagicLuo">
+        <!-- Assessments for Properties -->
+        <property name="name" value="luochunyun"></property>
+    </bean>
+    <!--
+      这里我们给magicLuo这个 beanName 起了一个别名luo，
+      然后又给别名luo起了一个别名luochunyun。
+      我们可以通过这两个别名获取到hello这个 bean 实例
+    -->
+    <alias name="magicLuo" alias="luo"/>
+    <alias name="luo" alias="luochunyun"/>
+
+
+
+</beans>

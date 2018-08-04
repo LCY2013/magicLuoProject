@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+    当一个 bean 直接依赖另一个 bean，可以使用 <ref/> 标签进行配置。
+    不过如某个 bean 并不直接依赖于其他 bean，但又需要其他 bean 先实例化好，
+    这个时候就需要使用 depends-on 特性了。
+    -->
+    <bean id="yuanYR" class="com.lcydream.project.springsource.dependson.YuanYR"/>
+    <bean id="magicLuo" class="com.lcydream.project.springsource.dependson.MagicLuo" depends-on="yuanYR"/>
+
+</beans>

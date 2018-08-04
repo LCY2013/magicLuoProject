@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" metadata-complete="true">
+
+    <!-- 指定Spring Bean的配置文件所在目录。默认配置在WEB-INF目录下 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:application-web.xml</param-value>
+    </context-param>
+
+    <!-- Spring配置 -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- Spring MVC配置 -->
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <!--<param-name>contextClass</param-name>
+            <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>-->
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:application-web.xml</param-value>
+        </init-param>
+        <!-- 可以自定义servlet.xml配置文件的位置和名称，默认为WEB-INF目录下，名称为[<servlet-name>]-servlet.xml，如spring-servlet.xml
+           <init-param>
+               <param-name>contextConfigLocation</param-name>
+               <param-value>/WEB-INF/spring-servlet.xml</param-value>&nbsp; 默认
+           </init-param>
+         -->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!--不做seo的情况下，大部分做的全部是动静态分离开发-->
+    <!--后台只返回json、前端HTML页面通过JS调用ajax请求获取后端的数据-->
+    <!--通过前端的js模板框架去渲染，减轻服务器的压力，视图和后台业务逻辑完全解耦-->
+    <!--只要制定好数据接口的规范，那么完全可以实现同步开发-->
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>*.json</url-pattern>
+    </servlet-mapping>
+
+
+</web-app>

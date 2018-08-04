@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <aop:aspectj-autoproxy/>
+    <!--<aop:aspectj-autoproxy proxy-target-class="true"/>-->
+
+    <!--
+        1、数据源：不管哪个厂商都要实现DataSource接口，拿到实际上就是数据库的connection对象
+        2、使用spring给我们提供的工具类TransactionManager事物管理器，来管理所有的事物操作（拿到连接对象）
+    -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <!--用于实现注解的申明式事物-->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!--
+        3、利用切面变成来实现对某一个类进行事物统一管理(声明式事物)
+    -->
+    <aop:config>
+        <aop:pointcut id="transactionPointCut" expression="execution(* com.lcydream.project..*service..*(..))"></aop:pointcut>
+        <aop:advisor advice-ref="transactionAdvisor" pointcut-ref="transactionPointCut"></aop:advisor>
+    </aop:config>
+
+    <!--
+        4、事物的通知规则配置：
+            propagation配置事物的传播机制（spring事物之间[业务]）
+            isolation配置事物的隔离级别（数据库事物之间）
+        Transaction：tx:NameSpace
+    -->
+    <tx:advice id="transactionAdvisor" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!--spring默认的事物传播机制是REQUIRED,支持当前事物，不存在事物就新建一个事物。
+            timeout：设置事物超时时间-->
+            <tx:method name="add*" propagation="REQUIRED" rollback-for="Exception,RuntimeException,SQLException" timeout="-1"/>
+            <tx:method name="insert*" propagation="REQUIRED" rollback-for="Exception,RuntimeException,SQLException"/>
+            <tx:method name="update*" propagation="REQUIRED" rollback-for="Exception,RuntimeException,SQLException"/>
+            <tx:method name="remove*" propagation="REQUIRED" rollback-for="Exception,RuntimeException,SQLException"/>
+            <tx:method name="modify*" propagation="REQUIRED" rollback-for="Exception,RuntimeException,SQLException"/>
+            <tx:method name="transfer" propagation="REQUIRED" rollback-for="Exception,RuntimeException,SQLException"/>
+            <tx:method name="transferIn" propagation="NESTED" rollback-for="Exception,RuntimeException,SQLException"/>
+            <tx:method name="transferOut" propagation="REQUIRES_NEW" rollback-for="Exception,RuntimeException,SQLException"/>
+            <!--NOT_SUPPORTED的事物机制是用非事物的方式运行，如果当前存在事物就将事物挂起-->
+            <!--<tx:method name="login*" propagation="NOT_SUPPORTED"/>-->
+            <!--MANDATORY的事物机制是必须存在事物，不存在事物就抛出异常-->
+            <tx:method name="login*" propagation="MANDATORY"/>
+            <tx:method name="query*" read-only="true"/>
+            <tx:method name="find*" read-only="true"/>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="select*" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 申明一个需要织入到虚拟切面的逻辑(切面) -->
+    <bean id="logAspect" class="com.lcydream.project.aopcomtrue.aop.aspect.LogAspect"></bean>
+    <bean id="menber" class="com.lcydream.project.aopcomtrue.model.Member"></bean>
+
+    <!--<aop:config>
+        <aop:aspect ref="logAspect">
+            &lt;!&ndash; 切点（具体的方法声明）&ndash;&gt;
+            &lt;!&ndash; Spring表达式的强大功能 &ndash;&gt;
+            <aop:pointcut expression="execution(* com.lcydream.project.aopcomtrue.aop.service..*(..))" id="logPointcut"/>
+            &lt;!&ndash; 不是按照这个顺序来通知的，是根据具体配置 &ndash;&gt;
+            <aop:before method="before" pointcut-ref="logPointcut"></aop:before>
+            <aop:after method="after" pointcut-ref="logPointcut"></aop:after>
+            &lt;!&ndash; 比较After与AfterReturning
+            try{
+                try{
+                    //@Before
+                    method.invoke(..);
+                }finally{
+                    //@After
+                }
+                //@AfterReturning
+            }catch(){
+                //@AfterThrowing
+            }
+            这里的returning默认是JoinPoint，如果是其他类型就需要手动填写这个参数
+            &ndash;&gt;
+            <aop:after-returning method="afterReturn" pointcut-ref="logPointcut" returning="object"></aop:after-returning>
+            <aop:after-throwing method="afterThrow" pointcut-ref="logPointcut"></aop:after-throwing>
+        </aop:aspect>
+    </aop:config>-->
+
+    <!--
+        具体的方法就是切点
+        如何定义一个具体的方法？
+        权限修饰符（public、private、protected 可省略），返回值（void、自定义类型 ,用*表示任意返回值，必填），属于那个包那个类(可省略)，方法名称（参数列表）throws 异常类型
+        借鉴了URL的语法cd（change dirctory） .(当前目录) cd .. 、这里的..表示这个com.lcydream.project.aopcomtrue.service包下的任意子包
+        ..表示任意
+        参数列表的不同和什么有关呢？
+            1、参数的个数
+            2、参数的顺序
+            3、参数的类型
+         跟参数的名字没有任何关系，形式参数
+         如果一个方法用final修饰了，就意味着这个方法不能被重写
+         也就意味着我们的子类不能对这个方法进行扩展
+         代理就无法实现的，所以表达式不存在final修饰
+       权限修饰符(可忽略) 返回值  包名(可忽略)       类名(可忽略) 方法名称 方法参数列表
+        execution(public * com.lcydream.project.aopcomtrue.service..*.*(..))
+        execution(public * com.lcydream.project.aopcomtrue.aop.service.MemberManagerService.modify(com.lcydream.project.aopcomtrue.model.Member) throws Exception)
+    -->
+
+</beans>

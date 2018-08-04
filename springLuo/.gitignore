@@ -1,0 +1,63 @@
+# project logs
+logs/
+out/
+
+# jrebel
+rebel.xml
+
+# maven ignore
+target/
+*.jar
+*.war
+*.tar
+*.tar.gz
+*.releaseBackup
+
+# eclipse ignore
+.settings/
+.project
+.classpath
+.metadata
+
+# idea ignore
+.idea/
+*.ipr
+*.iml
+*.iws
+*.class
+
+# temp ignore
+*.log
+*.cache
+*.diff
+*.patch
+*.tmp
+
+# system ignore
+.DS_Store
+Thumbs.db
+
+# default HSQL database files for production mode
+/prodDb.*
+
+# general HSQL database files
+*Db.properties
+*Db.script
+
+# logs
+/stacktrace.log
+/test/reports
+/logs
+*.log.*
+
+# project release file
+/*.war
+
+# plugin release file
+/*.zip
+/*.zip.sha1
+
+# older plugin install locations
+/plugins
+/web-app/plugins
+/web-app/WEB-INF/classes

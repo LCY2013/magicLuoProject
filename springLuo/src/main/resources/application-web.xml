@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.alibaba.com/schema/stat"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd http://www.alibaba.com/schema/stat http://www.alibaba.com/schema/stat.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <import resource="classpath:modeconfig/*.xml"/>
+
+    <!-- 启用spring mvc 注解 -->
+    <context:annotation-config />
+
+    <!-- scan the package and the sub package -->
+    <context:component-scan base-package="com.lcydream.project"/>
+
+    <!-- don't handle the static resource -->
+    <!--<mvc:default-servlet-handler />-->
+
+    <!-- if you use annotation you must configure following setting -->
+    <mvc:annotation-driven />
+
+    <!--velocity 视图解析器-->
+    <!--配置模板框架的支持类，模板存放的根目录-->
+    <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/views/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>-->
+
+    <!--过滤静态资源，不走handlerMapping-css，js，html，jpg，png-->
+
+    <!-- 3.1之前
+      <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+       配置注解控制器映射器,它是SpringMVC中用来将具体请求映射到具体方法
+      <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+    -->
+   <!-- 3.1之后
+     配置注解控制器映射器,它是SpringMVC中用来将Request请求URL到映射到具体Controller
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
+    配置注解控制器映射器,它是SpringMVC中用来将具体请求映射到具体方法
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter"/>
+   -->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter"/>
+
+</beans>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="news" class="com.lcydream.project.springsource.lookupmethod.News" scope="prototype"/>
+    <bean id="newsProvider" class="com.lcydream.project.springsource.lookupmethod.NewsProvider">
+        <property name="news" ref="news"/>
+    </bean>
+
+    <bean id="newsProviderLookupMethod" class="com.lcydream.project.springsource.lookupmethod.NewsProvider">
+        <lookup-method name="getNews" bean="news"/>
+    </bean>
+
+    <bean id="newsProviderAware" class="com.lcydream.project.springsource.lookupmethod.NewsProviderAware">
+        <property name="news" ref="news"/>
+    </bean>
+
+</beans>
