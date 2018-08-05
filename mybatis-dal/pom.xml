@@ -13,10 +13,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.gp.springmvc</groupId>
-            <artifactId>gupao-common-lib</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>

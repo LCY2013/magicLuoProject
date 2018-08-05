@@ -21,10 +21,11 @@ public class TestPlugin implements Interceptor {
         return invocation.proceed();
     }
 
+    @Override
     public Object plugin(Object target) {
         return Plugin.wrap(target, this);
     }
-
+    @Override
     public void setProperties(Properties properties) {
 
     }
