@@ -18,6 +18,8 @@
         <module>springLuo</module>
         <module>MagicLuoCustomMVC</module>
         <module>mybatis-dal</module>
+        <module>mybatis-use</module>
+        <module>MagicLuoCustomBatis</module>
     </modules>
 
     <properties>
