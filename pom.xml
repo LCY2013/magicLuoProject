@@ -20,6 +20,8 @@
         <module>mybatis-dal</module>
         <module>mybatis-use</module>
         <module>MagicLuoCustomBatis</module>
+        <module>MagicLuoIO</module>
+        <module>MagicLuoSerializable</module>
     </modules>
 
     <properties>

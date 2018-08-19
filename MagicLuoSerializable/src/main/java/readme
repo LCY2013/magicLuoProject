@@ -1,0 +1,2 @@
+主流的序列化技术有哪些:
+JSON/Hessian(2) /xml/protobuf/kryo/MsgPack/FST/thrift/protostuff/Avro
