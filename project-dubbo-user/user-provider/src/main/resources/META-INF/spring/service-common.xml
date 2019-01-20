@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-4.3.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+	   default-autowire="byName">
+
+	<context:property-placeholder location="classpath:application.properties" />
+
+	<context:component-scan base-package="com.lcydream.project.dal,com.lcydream.project.services" />
+	<!--<context:component-scan base-package="com.lcydream.project.services" />-->
+
+	<bean id="userDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close"
+		  p:url="${datasource.user.url}"
+		  p:username="${datasource.user.username}"
+		  p:password="${datasource.user.password}"
+		  p:initialSize="${datasource.user.initialSize}"
+		  p:minIdle="${datasource.user.minIdle}"
+		  p:maxActive="${datasource.user.maxActive}"
+		  p:maxWait="${datasource.user.maxWait}"
+		  p:timeBetweenEvictionRunsMillis="${datasource.user.timeBetweenEvictionRunsMillis}"
+		  p:minEvictableIdleTimeMillis="${datasource.user.minEvictableIdleTimeMillis}"
+		  p:validationQuery="${datasource.user.validationQuery}"
+		  p:testWhileIdle="${datasource.user.testWhileIdle}"
+		  p:testOnBorrow="${datasource.user.testOnBorrow}"
+		  p:testOnReturn="${datasource.user.testOnReturn}"
+		  p:poolPreparedStatements="${datasource.user.poolPreparedStatements}"
+		  p:maxPoolPreparedStatementPerConnectionSize="${datasource.user.maxPoolPreparedStatementPerConnectionSize}"
+		  p:connectionProperties="config.decrypt=true;config.decrypt.key=${datasource.user.publickey}"
+		  p:filters="${datasource.user.filters}">
+	</bean>
+
+	<bean id="userSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="userDataSource" />
+		<property name="configLocation" value="classpath:META-INF/spring/mybatis-config.xml"></property>
+		<!--<property name="typeAliasesPackage"
+				  value="com.lcydream.project.dal.entity" />-->
+		<property name="mapperLocations" value="classpath*:com/lcydream/project/dal/xml/*Mapper.xml" />
+	</bean>
+
+	<bean name="userMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage"
+				  value="com.lcydream.project.dal.persistence" />
+		<property name="sqlSessionFactoryBeanName" value="userSqlSessionFactory" />
+	</bean>
+
+	<!-- ========================================分隔线========================================= -->
+	<!-- 配置Spring的事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="userDataSource" />
+	</bean>
+
+	<!-- 注解方式配置事物 -->
+	<!-- <tx:annotation-driven transaction-manager="transactionManager" /> -->
+
+	<!-- 拦截器方式配置事物 -->
+	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="append*" propagation="REQUIRED" />
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="modify*" propagation="REQUIRED" />
+			<tx:method name="edit*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="remove*" propagation="REQUIRED" />
+			<tx:method name="repair" propagation="REQUIRED" />
+			<tx:method name="delAndRepair" propagation="REQUIRED" />
+
+			<tx:method name="get*" propagation="SUPPORTS" />
+			<tx:method name="find*" propagation="SUPPORTS" />
+			<tx:method name="load*" propagation="SUPPORTS" />
+			<tx:method name="search*" propagation="SUPPORTS" />
+			<tx:method name="datagrid*" propagation="SUPPORTS" />
+
+			<tx:method name="*" propagation="SUPPORTS" />
+		</tx:attributes>
+	</tx:advice>
+	<aop:config>
+		<aop:pointcut id="transactionPointcut" expression="execution(* com.lcydream.project.services..*(..))" />
+		<aop:advisor pointcut-ref="transactionPointcut" advice-ref="transactionAdvice" />
+	</aop:config>
+
+
+	<!-- 配置druid监控spring jdbc -->
+	<bean id="druidStatInterceptor" class="com.alibaba.druid.support.spring.stat.DruidStatInterceptor">
+	</bean>
+	<bean id="druidStatPointcut" class="org.springframework.aop.support.JdkRegexpMethodPointcut" scope="prototype">
+		<property name="patterns">
+			<list>
+				<value>com.lcydream.project.services.*</value>
+			</list>
+		</property>
+	</bean>
+	<aop:config>
+		<aop:advisor advice-ref="druidStatInterceptor" pointcut-ref="druidStatPointcut" />
+	</aop:config>
+</beans>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--开启spring基于注解的扫描-->
+    <context:annotation-config/>
+    <context:component-scan base-package="com.lcydream.project.serviceimpl"/>
+
+    <!--当前项目在整个分布式架构里面的唯一名称，计算依赖关系的标签-->
+    <dubbo:application name="order-provider" owner="magic"/>
+
+    <dubbo:monitor protocol="registry"/>
+
+    <!--dubbo这个服务所要暴露的服务地址所对应的注册中心-->
+    <dubbo:registry protocol="zookeeper" address="192.168.21.160:2181,192.168.21.163:2181,192.168.21.164:2181,192.168.21.165:2181"/>
+    <!--只注册服务subscribe="false"-->
+    <!--<dubbo:registry protocol="zookeeper" address="192.168.21.160:2181,192.168.21.163:2181,192.168.21.164:2181,192.168.21.165:2181" subscribe="false"/>-->
+    <!--当这个服务我们不需要发布，但是需要使用其他的服务，就需要设置为只订阅模式register="false"-->
+    <!--<dubbo:registry protocol="zookeeper" address="192.168.21.160:2181,192.168.21.163:2181,192.168.21.164:2181,192.168.21.165:2181" register="false"/>-->
+    <!--可以存在多个注册中心-->
+    <!--<dubbo:registry protocol="zookeeperTwo" address="192.168.21.160:2181,192.168.21.163:2181,192.168.21.164:2181,192.168.21.165:2181"/>-->
+    <!--表示不启动注册中心-->
+    <!--<dubbo:registry address="N/A"/>-->
+
+    <!--当前服务发布所依赖的协议；webserovice、Thrift、Hessain、http-->
+    <dubbo:protocol name="dubbo" port="20881"/>
+
+    <!--hessian协议-->
+    <dubbo:protocol name="hessian" port="8091"/>
+
+    <!--配置多版本号，多协议-->
+    <!--服务发布的配置，需要暴露的服务接口,支持同一个接口不同的协议-->
+    <dubbo:service
+            interface="com.lcydream.project.service.IOrderService"
+            ref="orderService" protocol="hessian,dubbo" version="1.0.0" timeout="20"/>
+    <dubbo:service
+            interface="com.lcydream.project.service.IOrderService"
+            ref="orderServiceV2" protocol="hessian,dubbo" version="2.0.0" timeout="20"/>
+
+    <!--Bean bean定义-->
+    <!--<bean id="orderService" class="com.lcydream.project.serviceimpl.OrderServiceImpl"/>-->
+
+</beans>

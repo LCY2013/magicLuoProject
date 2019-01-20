@@ -1,0 +1,12 @@
+zk的监听情况：
+(1)连接状态
+KeeperStat.Expired  在一定时间内客户端没有收到服务器的通知， 则认为当前的会话已经过期了。
+KeeperStat.Disconnected  断开连接的状态
+KeeperStat.SyncConnected  客户端和服务器端在某一个节点上建立连接，并且完成一次version、zxid同步
+KeeperStat.authFailed  授权失败
+(2)事件类型
+NodeCreated  当节点被创建的时候，触发
+NodeChildrenChanged  表示子节点被创建、被删除、子节点数据发生变化
+NodeDataChanged    节点数据发生变化
+NodeDeleted        节点被删除
+None   客户端和服务器端连接状态发生变化的时候，事件类型就是None

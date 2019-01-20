@@ -1,0 +1,8 @@
+RPC 远程过程调用协议
+    Remote procedure call protocal
+    RPC协议其实是一个规范。Dubbo、Thrif、RMI、Webservice、Hessain
+    网络协议和网络IO对于调用端和服务端来说是透明
+RMI 远程方法调用
+    RMI(remote method invocation)  , 可以认为是RPC的java版本
+    RMI使用的是JRMP（Java Remote Messageing Protocol）, JRMP是专门为java定制的通信协议，
+    所以踏实纯java的分布式解决方案
